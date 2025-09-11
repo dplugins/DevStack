@@ -14,6 +14,9 @@ Replace URLs on web pages to test with different environments:
 - Origin-only matching mode (matches only scheme + host, ignoring paths)
 - Real-time processing of dynamically added content
 
+![URL Swapper screenshot](./screenshoots/url-swapper.png)
+
+
 ### 🧹 Cache Buster
 
 Force reload of CSS/JS files without server changes:
@@ -26,6 +29,8 @@ Force reload of CSS/JS files without server changes:
 - Works with dynamically loaded content and preload links
 - Processes both regular links and preload resources
 
+![Cache Buster screenshot](./screenshoots/cache-buster.png)
+
 ## Installation
 
 1. Clone or download this repository
@@ -33,6 +38,9 @@ Force reload of CSS/JS files without server changes:
 3. Enable "Developer mode"
 4. Click "Load unpacked" and select the DevStack folder
 5. The extension icon will appear in your toolbar
+
+
+![Installation screenshot](./screenshoots/installation.png)
 
 ## Usage
 
