@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Dev Stack",
   "version": "1.0.0",
-  "description": "When enabled, replaces any occurrence of the Source URL with the Destination URL on matching pages.",
+  "description": "Developer tools for URL swapping and cache busting to enhance development workflow.",
   "action": {
     "default_title": "Dev Stack",
     "default_popup": "popup.html"
