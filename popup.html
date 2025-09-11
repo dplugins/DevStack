@@ -1,223 +1,210 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Dev Stack</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <h1>Dev Stack</h1>
 
-    <!-- Tab Navigation -->
-    <div class="tab-nav">
-      <button class="tab-button active" data-tab="url-swapper">
-        URL Swapper
-      </button>
-      <button class="tab-button" data-tab="cache-buster">Cache Buster</button>
+<head>
+  <meta charset="utf-8" />
+  <title>Dev Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Dev Stack</h1>
+
+  <!-- Tab Navigation -->
+  <div class="tab-nav">
+    <button class="tab-button active" data-tab="url-swapper">
+      URL Swapper
+    </button>
+    <button class="tab-button" data-tab="cache-buster">Cache Buster</button>
+  </div>
+
+  <!-- URL Swapper Tab -->
+  <div id="url-swapper-tab" class="tab-content active">
+    <!-- Enabled toggle -->
+    <div class="toggle-wrap">
+      <span>Enabled</span>
+      <label class="toggle">
+        <input id="urlSwapperEnabled" type="checkbox" />
+        <span class="slider"></span>
+      </label>
     </div>
+    <div id="urlSwapperSettings" class="hidden">
+      <!-- URLs -->
 
-    <!-- URL Swapper Tab -->
-    <div id="url-swapper-tab" class="tab-content active">
-      <!-- Enabled toggle -->
-      <div class="label-row" style="margin-top: 2px">
-        <span>Enabled</span>
+      <div class="input-wrap">
+        <label for="source">Source URL (match)</label>
+        <input id="source" type="text" placeholder="e.g. http://localhost:3000" />
+      </div>
+      <div class="input-wrap">
+        <label for="dest">Destination URL (replace)</label>
+        <input id="dest" type="text" placeholder="e.g. https://example.com" />
+      </div>
+      <!-- Origin-only toggle -->
+      <div class="toggle-wrap">
+        <span>Match by origin only (scheme + host)</span>
         <label class="toggle">
-          <input id="urlSwapperEnabled" type="checkbox" />
+          <input id="originOnly" type="checkbox" />
           <span class="slider"></span>
         </label>
       </div>
-      <div id="urlSwapperSettings" class="hidden">
-        <!-- URLs -->
-        <label for="source">Source URL (match)</label>
-        <input
-          id="source"
-          type="text"
-          placeholder="e.g. http://localhost:3000"
-        />
 
-        <label for="dest">Destination URL (replace)</label>
-        <input id="dest" type="text" placeholder="e.g. https://example.com" />
+      <!-- Swap types -->
+      <fieldset>
+        <legend>Swap these types</legend>
 
-        <!-- Origin-only toggle -->
-        <div class="label-row" style="margin-top: 8px">
-          <span>Match by origin only (scheme + host)</span>
+        <div class="toggle-wrap">
+          <span>Images
+            <code>img/src, srcset, data-*</code>
+          </span>
           <label class="toggle">
-            <input id="originOnly" type="checkbox" />
+            <input type="checkbox" id="swapImages" />
             <span class="slider"></span>
           </label>
         </div>
 
-        <!-- Swap types -->
-        <fieldset>
-          <legend>Swap these types</legend>
-
-          <div class="label-row">
-            <span>Images (<code>img/src, srcset, data-*</code>)</span>
-            <label class="toggle">
-              <input type="checkbox" id="swapImages" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="label-row">
-            <span>CSS files (<code>link[rel=stylesheet]</code>)</span>
-            <label class="toggle">
-              <input type="checkbox" id="swapCSS" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="label-row">
-            <span>JS files (<code>script[src]</code>)</span>
-            <label class="toggle">
-              <input type="checkbox" id="swapJS" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="label-row">
-            <span
-              >Video / Audio (<code>video, audio, poster, source</code>)</span
-            >
-            <label class="toggle">
-              <input type="checkbox" id="swapMedia" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="label-row">
-            <span>Iframes (<code>iframe[src]</code>)</span>
-            <label class="toggle">
-              <input type="checkbox" id="swapIframes" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="label-row">
-            <span
-              >Inline CSS (<code>&lt;style&gt;</code> &
-              <code>style=""</code>)</span
-            >
-            <label class="toggle">
-              <input type="checkbox" id="swapInlineCSS" />
-              <span class="slider"></span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Menu links -->
-        <fieldset>
-          <legend>Optional: Menu links</legend>
-          <div class="hint">
-            Swap only anchors that match these selectors (comma-separated).
-            Leave empty to disable.
-          </div>
-          <input
-            id="menuSelectors"
-            type="text"
-            placeholder="e.g. nav a, .menu a, header .navbar a"
-          />
-        </fieldset>
-
-        <div class="hint">
-          Tip: Most use Images, CSS, JS. Keep menu selectors empty unless you
-          specifically want menu links swapped.
+        <div class="toggle-wrap">
+          <span>CSS files
+            <code>link[rel=stylesheet]</code>
+          </span>
+          <label class="toggle">
+            <input type="checkbox" id="swapCSS" />
+            <span class="slider"></span>
+          </label>
         </div>
+
+        <div class="toggle-wrap">
+          <span>JS files <code>script[src]</code></span>
+          <label class="toggle">
+            <input type="checkbox" id="swapJS" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-wrap">
+          <span>Video / Audio <code>video, audio, poster, source</code></span>
+          <label class="toggle">
+            <input type="checkbox" id="swapMedia" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-wrap">
+          <span>Iframes <code>iframe[src]</code></span>
+          <label class="toggle">
+            <input type="checkbox" id="swapIframes" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-wrap">
+          <span>Inline CSS
+            <code>&lt;style&gt; & style=""</code></span>
+          <label class="toggle">
+            <input type="checkbox" id="swapInlineCSS" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Menu links -->
+      <fieldset>
+        <legend>Optional: Menu links</legend>
+        <input id="menuSelectors" type="text" placeholder="e.g. nav a, .menu a, header .navbar a" />
+        <div class="hint">
+          Swap only anchors that match these selectors (comma-separated).
+          Leave empty to disable.
+        </div>
+      </fieldset>
+
+      <div class="hint tip">
+        Tip: Most use Images, CSS, JS. Keep menu selectors empty unless you
+        specifically want menu links swapped.
       </div>
     </div>
+  </div>
 
-    <!-- Cache Buster Tab -->
-    <div id="cache-buster-tab" class="tab-content">
-      <!-- Enabled toggle -->
-      <div class="label-row" style="margin-top: 2px">
-        <span>Enabled</span>
-        <label class="toggle">
-          <input id="cacheBusterEnabled" type="checkbox" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div id="cacheBusterSettings" class="hidden">
-        <!-- Cache busting options -->
-        <fieldset>
-          <legend>Cache Busting Options</legend>
+  <!-- Cache Buster Tab -->
+  <div id="cache-buster-tab" class="tab-content">
+    <!-- Enabled toggle -->
+    <div class="toggle-wrap">
+      <span>Enabled</span>
+      <label class="toggle">
+        <input id="cacheBusterEnabled" type="checkbox" />
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="cacheBusterSettings" class="hidden">
+      <!-- Cache busting options -->
+      <fieldset>
+        <legend>Cache Busting Options</legend>
 
-          <div class="label-row">
-            <span>Add ?ver=timestamp to CSS files</span>
-            <label class="toggle">
-              <input type="checkbox" id="addTimestampCSS" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <!-- CSS File Filter -->
-          <div id="cssFileFilter" class="hidden" style="margin-top: 8px">
-            <div class="hint" style="margin-bottom: 6px">
-              CSS file names or patterns (one per line). Leave empty for all CSS
-              files.
-            </div>
-            <textarea
-              id="cssFileNames"
-              placeholder="style.css&#10;main*.css&#10;components/*.css"
-              rows="2"
-            ></textarea>
-          </div>
-
-          <div class="label-row" style="margin-top: 12px">
-            <span>Add ?ver=timestamp to JS files</span>
-            <label class="toggle">
-              <input type="checkbox" id="addTimestampJS" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <!-- JS File Filter -->
-          <div id="jsFileFilter" class="hidden" style="margin-top: 8px">
-            <div class="hint" style="margin-bottom: 6px">
-              JS file names or patterns (one per line). Leave empty for all JS
-              files.
-            </div>
-            <textarea
-              id="jsFileNames"
-              placeholder="script.js&#10;app*.js&#10;utils/*.js"
-              rows="2"
-            ></textarea>
-          </div>
-
-          <div class="label-row" style="margin-top: 12px">
-            <span>Disable browser cache for selected domains</span>
-            <label class="toggle">
-              <input type="checkbox" id="disableCache" />
-              <span class="slider"></span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Domain selection -->
-        <fieldset>
-          <legend>Target Domains</legend>
-          <div class="hint">
-            Enter domains to apply cache busting (one per line). Leave empty to
-            apply to all domains.
-          </div>
-          <textarea
-            id="targetDomains"
-            placeholder="example.com&#10;localhost:3000&#10;staging.example.com"
-            rows="4"
-          ></textarea>
-        </fieldset>
-
-        <div class="hint">
-          Cache busting adds timestamp parameters to force reload of CSS/JS
-          files without server changes.
+        <div class="toggle-wrap">
+          <span>Add ?ver=timestamp to CSS files</span>
+          <label class="toggle">
+            <input type="checkbox" id="addTimestampCSS" />
+            <span class="slider"></span>
+          </label>
         </div>
+
+        <!-- CSS File Filter -->
+        <div id="cssFileFilter" class="hidden">
+          <div class="hint">
+            CSS file names or patterns (one per line). Leave empty for all CSS
+            files.
+          </div>
+          <textarea id="cssFileNames" placeholder="style.css&#10;main*.css&#10;components/*.css" rows="2"></textarea>
+        </div>
+
+        <div class="toggle-wrap">
+          <span>Add ?ver=timestamp to JS files</span>
+          <label class="toggle">
+            <input type="checkbox" id="addTimestampJS" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- JS File Filter -->
+        <div id="jsFileFilter" class="hidden">
+          <div class="hint">
+            JS file names or patterns (one per line). Leave empty for all JS
+            files.
+          </div>
+          <textarea id="jsFileNames" placeholder="script.js&#10;app*.js&#10;utils/*.js" rows="2"></textarea>
+        </div>
+
+        <div class="toggle-wrap">
+          <span>Disable browser cache for selected domains</span>
+          <label class="toggle">
+            <input type="checkbox" id="disableCache" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Domain selection -->
+      <fieldset>
+        <legend>Target Domains</legend>
+        <textarea id="targetDomains" placeholder="example.com&#10;localhost:3000&#10;staging.example.com"
+        rows="4"></textarea>
+        <div class="hint">
+          Enter domains to apply cache busting (one per line). Leave empty to
+          apply to all domains.
+        </div>
+      </fieldset>
+
+      <div class="hint tip">
+        Cache busting adds timestamp parameters to force reload of CSS/JS
+        files without server changes.
       </div>
     </div>
+  </div>
 
-    <button id="save">Save</button>
-    <div id="status" class="small"></div>
+  <button id="save">Save</button>
+  <div id="status" class="small"></div>
 
-    <!-- <script src="chrome-mock.js"></script> -->
-    <script src="popup.js"></script>
-  </body>
+  <script src="chrome-mock.js"></script>
+  <script src="popup.js"></script>
+</body>
+
 </html>
