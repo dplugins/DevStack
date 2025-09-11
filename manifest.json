@@ -3,6 +3,9 @@
   "name": "Dev Stack",
   "version": "1.0.0",
   "description": "Developer tools for URL swapping and cache busting to enhance development workflow.",
+  "icons": {
+    "128": "icons/icon-128.png"
+  },
   "action": {
     "default_title": "Dev Stack",
     "default_popup": "popup.html"
