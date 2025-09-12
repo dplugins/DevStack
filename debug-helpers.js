@@ -599,9 +599,22 @@
     chrome.storage.onChanged.addListener((changes, namespace) => {
       if (namespace === "sync" && changes.debugHelpers) {
         const newSettings = changes.debugHelpers.newValue;
-        if (newSettings && newSettings.enabled) {
-          // Reload to apply new settings
-          window.location.reload();
+        if (newSettings) {
+          // Update settings without reloading
+          if (newSettings.enabled) {
+            // Recreate trigger button with new position if needed
+            createTriggerButton();
+          } else {
+            // Remove trigger button and panel if disabled
+            const existingButton = document.getElementById(
+              "devstack-debug-trigger"
+            );
+            const existingPanel = document.getElementById(
+              "devstack-debug-panel"
+            );
+            if (existingButton) existingButton.remove();
+            if (existingPanel) existingPanel.remove();
+          }
         }
       }
     });

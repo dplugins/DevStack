@@ -305,9 +305,22 @@
     chrome.storage.onChanged.addListener((changes, namespace) => {
       if (namespace === "sync" && changes.adminShortcuts) {
         const newSettings = changes.adminShortcuts.newValue;
-        if (newSettings && newSettings.enabled) {
-          // Reload to apply new settings
-          window.location.reload();
+        if (newSettings) {
+          // Update settings without reloading
+          if (newSettings.enabled) {
+            // Recreate trigger button with new position if needed
+            createTriggerButton();
+          } else {
+            // Remove trigger button and panel if disabled
+            const existingButton = document.getElementById(
+              "devstack-admin-trigger"
+            );
+            const existingPanel = document.getElementById(
+              "devstack-admin-panel"
+            );
+            if (existingButton) existingButton.remove();
+            if (existingPanel) existingPanel.remove();
+          }
         }
       }
     });
