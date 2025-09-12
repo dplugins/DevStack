@@ -30,6 +30,16 @@ const cacheBusterEls = {
   settings: q("cacheBusterSettings"),
 };
 
+// Debug Helpers elements
+const debugHelpersEls = {
+  enabled: q("debugHelpersEnabled"),
+  autoHighlight: q("autoHighlight"),
+  showRESTButton: q("showRESTButton"),
+  highlightParams: q("highlightParams"),
+  customParams: q("customParams"),
+  settings: q("debugHelpersSettings"),
+};
+
 // Common elements
 const els = {
   status: q("status"),
@@ -172,14 +182,75 @@ function getCacheBusterPayload() {
   };
 }
 
+// Debug Helpers functions
+async function loadDebugHelpers() {
+  const { debugHelpers = {} } = await chrome.storage.sync.get("debugHelpers");
+  debugHelpersEls.enabled.checked = !!debugHelpers.enabled;
+  debugHelpersEls.autoHighlight.checked = debugHelpers.autoHighlight ?? true;
+  debugHelpersEls.showRESTButton.checked = debugHelpers.showRESTButton ?? true;
+  debugHelpersEls.highlightParams.value = (
+    debugHelpers.highlightParams || [
+      "elementor-preview",
+      "fl_builder",
+      "et_fb",
+      "vc_editable",
+      "gutenberg",
+      "nocache",
+      "debug",
+      "preview",
+      "preview_id",
+      "preview_nonce",
+      "customize_changeset_uuid",
+      "customize_theme",
+      "customize_messenger_channel",
+      "wp_customize",
+      "elementor_library",
+      "elementor_action",
+      "et_pb_preview",
+      "vc_action",
+      "wp_theme_preview",
+      "wp_theme_switch",
+      "wp_theme_switch_nonce",
+    ]
+  ).join("\n");
+  debugHelpersEls.customParams.value = (debugHelpers.customParams || []).join(
+    "\n"
+  );
+
+  // Show/hide settings based on enabled state
+  setSettingsVisible(debugHelpersEls, debugHelpersEls.enabled.checked);
+}
+
+function getDebugHelpersPayload() {
+  const highlightParams = (debugHelpersEls.highlightParams.value || "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const customParams = (debugHelpersEls.customParams.value || "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  return {
+    enabled: debugHelpersEls.enabled.checked,
+    autoHighlight: debugHelpersEls.autoHighlight.checked,
+    showRESTButton: debugHelpersEls.showRESTButton.checked,
+    highlightParams,
+    customParams,
+  };
+}
+
 // Save function
 async function saveSettings() {
   const urlSwapper = getUrlSwapperPayload();
   const cacheBuster = getCacheBusterPayload();
+  const debugHelpers = getDebugHelpersPayload();
 
   await chrome.storage.sync.set({
     urlSwapper,
     cacheBuster,
+    debugHelpers,
   });
 
   els.status.textContent = "Saved!";
@@ -192,6 +263,7 @@ async function init() {
   initTabs();
   await loadUrlSwapper();
   await loadCacheBuster();
+  await loadDebugHelpers();
 
   // Event listeners
   els.save.addEventListener("click", saveSettings);
@@ -214,6 +286,16 @@ async function init() {
       cacheBuster: { ...cacheBuster, enabled },
     });
     setSettingsVisible(cacheBusterEls, enabled);
+  });
+
+  // Debug Helpers toggle updates immediately
+  debugHelpersEls.enabled.addEventListener("change", async () => {
+    const { debugHelpers = {} } = await chrome.storage.sync.get("debugHelpers");
+    const enabled = debugHelpersEls.enabled.checked;
+    await chrome.storage.sync.set({
+      debugHelpers: { ...debugHelpers, enabled },
+    });
+    setSettingsVisible(debugHelpersEls, enabled);
   });
 
   // CSS toggle updates file filter visibility

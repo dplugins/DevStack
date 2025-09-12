@@ -16,7 +16,6 @@ Replace URLs on web pages to test with different environments:
 
 ![URL Swapper screenshot](./screenshoots/url-swapper.png)
 
-
 ### 🧹 Cache Buster
 
 Force reload of CSS/JS files without server changes:
@@ -31,6 +30,25 @@ Force reload of CSS/JS files without server changes:
 
 ![Cache Buster screenshot](./screenshoots/cache-buster.png)
 
+### 🔧 Debug Helpers
+
+WordPress and generic debugging tools for developers:
+
+- **Quick Debug Panel**: Floating overlay with one-click debug parameter toggles
+- **Auto-highlight**: Automatically detects and highlights debug parameters in URLs
+- **WordPress Integration**: Auto-detects WordPress sites and provides REST API access
+- **Custom Parameters**: Add your own debug parameters for quick access
+- **Keyboard Shortcuts**: Ctrl+Shift+D to toggle debug panel
+- **Parameter Management**: View, add, and remove debug parameters from current URL
+- **REST API Button**: One-click access to WordPress REST API endpoints
+
+**Supported Debug Parameters:**
+
+- **Essential**: `nocache=1`, `debug=1` (built-in quick buttons)
+- **WordPress Builders**: `elementor-preview`, `fl_builder`, `et_fb`, `vc_editable`, `gutenberg`
+- **WordPress Core**: `wp_customize`, `preview`, `preview_id`, `preview_nonce`
+- **Custom parameters**: Fully configurable via settings
+
 ## Installation
 
 1. Clone or download this repository
@@ -39,12 +57,11 @@ Force reload of CSS/JS files without server changes:
 4. Click "Load unpacked" and select the DevStack folder
 5. The extension icon will appear in your toolbar
 
-
 ![Installation screenshot](./screenshoots/installation.png)
 
 ## Usage
 
-Click the Dev Stack icon to open the popup with two tabs:
+Click the Dev Stack icon to open the popup with three tabs:
 
 ### URL Swapper Tab
 
@@ -65,6 +82,24 @@ Click the Dev Stack icon to open the popup with two tabs:
 5. Enter target domains (one per line) or leave empty for all domains
 6. Click "Save"
 
+### Debug Helpers Tab
+
+1. Toggle "Enabled" to activate debug helpers
+2. Configure debug panel options (auto-highlight, REST API button)
+3. Add parameters to highlight when detected in URLs
+4. Add custom parameters for quick access buttons
+5. Use keyboard shortcuts: **Ctrl+Shift+D** to toggle debug panel
+6. Click "Save"
+
+**Debug Panel Features:**
+
+- Appears as floating overlay on web pages
+- Quick action buttons for common debug parameters
+- Real-time URL parameter detection and highlighting
+- One-click parameter addition/removal
+- WordPress REST API access (auto-detected)
+- Custom parameter support
+
 ## Development
 
 The extension consists of:
@@ -73,6 +108,7 @@ The extension consists of:
 - `popup.js` - Tab management and settings persistence
 - `content.js` - URL Swapper functionality with mutation observer
 - `cache-buster.js` - Cache busting functionality with file filtering
+- `debug-helpers.js` - WordPress and generic debugging tools
 - `style.scss` - Compiled styles for the popup interface
 - `chrome-mock.js` - Chrome API mock for development
 - `manifest.json` - Extension configuration
