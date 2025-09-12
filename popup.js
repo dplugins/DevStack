@@ -35,9 +35,22 @@ const debugHelpersEls = {
   enabled: q("debugHelpersEnabled"),
   autoHighlight: q("autoHighlight"),
   showRESTButton: q("showRESTButton"),
+  panelPosition: q("debugPanelPosition"),
   highlightParams: q("highlightParams"),
   customParams: q("customParams"),
   settings: q("debugHelpersSettings"),
+};
+
+// Admin Shortcuts elements
+const adminShortcutsEls = {
+  enabled: q("adminShortcutsEnabled"),
+  panelPosition: q("adminPanelPosition"),
+  shortcutsList: q("adminShortcutsList"),
+  settings: q("adminShortcutsSettings"),
+  builder: q("adminShortcutsBuilder"),
+  shortcutsContainer: q("shortcutsList"),
+  addBtn: q("addShortcutBtn"),
+  toggleRawBtn: q("toggleRawEditor"),
 };
 
 // Common elements
@@ -188,6 +201,8 @@ async function loadDebugHelpers() {
   debugHelpersEls.enabled.checked = !!debugHelpers.enabled;
   debugHelpersEls.autoHighlight.checked = debugHelpers.autoHighlight ?? true;
   debugHelpersEls.showRESTButton.checked = debugHelpers.showRESTButton ?? true;
+  debugHelpersEls.panelPosition.value =
+    debugHelpers.panelPosition || "top-right";
   debugHelpersEls.highlightParams.value = (
     debugHelpers.highlightParams || [
       "elementor-preview",
@@ -236,8 +251,211 @@ function getDebugHelpersPayload() {
     enabled: debugHelpersEls.enabled.checked,
     autoHighlight: debugHelpersEls.autoHighlight.checked,
     showRESTButton: debugHelpersEls.showRESTButton.checked,
+    panelPosition: debugHelpersEls.panelPosition.value,
     highlightParams,
     customParams,
+  };
+}
+
+// Admin Shortcuts functions
+let currentShortcuts = [];
+
+async function loadAdminShortcuts() {
+  const { adminShortcuts = {} } = await chrome.storage.sync.get(
+    "adminShortcuts"
+  );
+  adminShortcutsEls.enabled.checked = !!adminShortcuts.enabled;
+  adminShortcutsEls.panelPosition.value =
+    adminShortcuts.panelPosition || "top-left";
+
+  // Load shortcuts
+  currentShortcuts = adminShortcuts.shortcuts || [
+    { name: "Dashboard", url: "/wp-admin/", icon: "🏠" },
+    { name: "Pages", url: "/wp-admin/edit.php?post_type=page", icon: "📄" },
+    { name: "Posts", url: "/wp-admin/edit.php", icon: "📝" },
+    { name: "Plugins", url: "/wp-admin/plugins.php", icon: "🔌" },
+    { name: "Themes", url: "/wp-admin/themes.php", icon: "🎨" },
+    { name: "Users", url: "/wp-admin/users.php", icon: "👥" },
+    { name: "Settings", url: "/wp-admin/options-general.php", icon: "⚙️" },
+    {
+      name: "Debug Log",
+      url: "/wp-admin/tools.php?page=debug-log",
+      icon: "🐛",
+    },
+  ];
+
+  // Update visual builder
+  renderShortcutsList();
+
+  // Update raw textarea
+  updateRawTextarea();
+
+  // Show/hide settings based on enabled state
+  setSettingsVisible(adminShortcutsEls, adminShortcutsEls.enabled.checked);
+}
+
+function renderShortcutsList() {
+  const container = adminShortcutsEls.shortcutsContainer;
+  container.innerHTML = "";
+
+  if (currentShortcuts.length === 0) {
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+    emptyState.textContent =
+      "No shortcuts added yet. Click 'Add Shortcut' to get started.";
+    container.appendChild(emptyState);
+    return;
+  }
+
+  currentShortcuts.forEach((shortcut, index) => {
+    const item = document.createElement("div");
+    item.className = "shortcut-item";
+    item.innerHTML = `
+      <div class="shortcut-icon">${shortcut.icon}</div>
+      <div class="shortcut-details">
+        <div class="shortcut-name">${shortcut.name}</div>
+        <div class="shortcut-url">${shortcut.url}</div>
+      </div>
+      <div class="shortcut-actions">
+        <button class="edit-btn" data-index="${index}">Edit</button>
+        <button class="delete-btn" data-index="${index}">Delete</button>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+
+  // Add event listeners
+  container.querySelectorAll(".edit-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const index = parseInt(e.target.dataset.index);
+      showShortcutForm(currentShortcuts[index], index);
+    });
+  });
+
+  container.querySelectorAll(".delete-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const index = parseInt(e.target.dataset.index);
+      if (confirm(`Delete "${currentShortcuts[index].name}"?`)) {
+        currentShortcuts.splice(index, 1);
+        renderShortcutsList();
+        updateRawTextarea();
+      }
+    });
+  });
+}
+
+function updateRawTextarea() {
+  const shortcutsText = currentShortcuts
+    .map((s) => `${s.name}|${s.url}|${s.icon}`)
+    .join("\n");
+  adminShortcutsEls.shortcutsList.value = shortcutsText;
+}
+
+function showShortcutForm(shortcut = null, editIndex = -1) {
+  const isEdit = shortcut !== null;
+
+  // Create modal
+  const modal = document.createElement("div");
+  modal.className = "shortcut-form";
+  modal.innerHTML = `
+    <div class="form-content">
+      <div class="form-header">
+        <h3>${isEdit ? "Edit Shortcut" : "Add Shortcut"}</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="form-group">
+        <label for="shortcutName">Name</label>
+        <input type="text" id="shortcutName" value="${
+          shortcut?.name || ""
+        }" placeholder="e.g., Dashboard">
+      </div>
+      <div class="form-group">
+        <label for="shortcutUrl">URL</label>
+        <input type="text" id="shortcutUrl" value="${
+          shortcut?.url || ""
+        }" placeholder="e.g., /wp-admin/">
+      </div>
+      <div class="form-group">
+        <label for="shortcutIcon">Icon (Emoji)</label>
+        <input type="text" id="shortcutIcon" value="${
+          shortcut?.icon || ""
+        }" placeholder="e.g., 🏠" maxlength="2">
+        <div class="icon-preview">
+          <span>Preview:</span>
+          <div class="preview-icon" id="iconPreview">${
+            shortcut?.icon || "🔗"
+          }</div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="cancel-btn">Cancel</button>
+        <button class="save-btn">${isEdit ? "Update" : "Add"} Shortcut</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Get form elements
+  const nameInput = modal.querySelector("#shortcutName");
+  const urlInput = modal.querySelector("#shortcutUrl");
+  const iconInput = modal.querySelector("#shortcutIcon");
+  const iconPreview = modal.querySelector("#iconPreview");
+  const cancelBtn = modal.querySelector(".cancel-btn");
+  const saveBtn = modal.querySelector(".save-btn");
+  const closeBtn = modal.querySelector(".close-btn");
+
+  // Update icon preview
+  const updateIconPreview = () => {
+    iconPreview.textContent = iconInput.value || "🔗";
+  };
+
+  iconInput.addEventListener("input", updateIconPreview);
+
+  // Close modal
+  const closeModal = () => {
+    document.body.removeChild(modal);
+  };
+
+  closeBtn.addEventListener("click", closeModal);
+  cancelBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Save shortcut
+  saveBtn.addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    const url = urlInput.value.trim();
+    const icon = iconInput.value.trim() || "🔗";
+
+    if (!name || !url) {
+      alert("Please fill in both name and URL");
+      return;
+    }
+
+    const newShortcut = { name, url, icon };
+
+    if (isEdit) {
+      currentShortcuts[editIndex] = newShortcut;
+    } else {
+      currentShortcuts.push(newShortcut);
+    }
+
+    renderShortcutsList();
+    updateRawTextarea();
+    closeModal();
+  });
+
+  // Focus first input
+  nameInput.focus();
+}
+
+function getAdminShortcutsPayload() {
+  return {
+    enabled: adminShortcutsEls.enabled.checked,
+    panelPosition: adminShortcutsEls.panelPosition.value,
+    shortcuts: currentShortcuts,
   };
 }
 
@@ -246,11 +464,13 @@ async function saveSettings() {
   const urlSwapper = getUrlSwapperPayload();
   const cacheBuster = getCacheBusterPayload();
   const debugHelpers = getDebugHelpersPayload();
+  const adminShortcuts = getAdminShortcutsPayload();
 
   await chrome.storage.sync.set({
     urlSwapper,
     cacheBuster,
     debugHelpers,
+    adminShortcuts,
   });
 
   els.status.textContent = "Saved!";
@@ -264,6 +484,7 @@ async function init() {
   await loadUrlSwapper();
   await loadCacheBuster();
   await loadDebugHelpers();
+  await loadAdminShortcuts();
 
   // Event listeners
   els.save.addEventListener("click", saveSettings);
@@ -296,6 +517,40 @@ async function init() {
       debugHelpers: { ...debugHelpers, enabled },
     });
     setSettingsVisible(debugHelpersEls, enabled);
+  });
+
+  // Admin Shortcuts toggle updates immediately
+  adminShortcutsEls.enabled.addEventListener("change", async () => {
+    const { adminShortcuts = {} } = await chrome.storage.sync.get(
+      "adminShortcuts"
+    );
+    const enabled = adminShortcutsEls.enabled.checked;
+    await chrome.storage.sync.set({
+      adminShortcuts: { ...adminShortcuts, enabled },
+    });
+    setSettingsVisible(adminShortcutsEls, enabled);
+  });
+
+  // Admin Shortcuts visual builder events
+  adminShortcutsEls.addBtn.addEventListener("click", () => {
+    showShortcutForm();
+  });
+
+  adminShortcutsEls.toggleRawBtn.addEventListener("click", () => {
+    const isRawVisible =
+      !adminShortcutsEls.shortcutsList.classList.contains("hidden");
+
+    if (isRawVisible) {
+      // Switch to visual builder
+      adminShortcutsEls.shortcutsList.classList.add("hidden");
+      adminShortcutsEls.builder.classList.remove("hidden");
+      adminShortcutsEls.toggleRawBtn.textContent = "Show Raw Editor";
+    } else {
+      // Switch to raw editor
+      adminShortcutsEls.shortcutsList.classList.remove("hidden");
+      adminShortcutsEls.builder.classList.add("hidden");
+      adminShortcutsEls.toggleRawBtn.textContent = "Show Visual Builder";
+    }
   });
 
   // CSS toggle updates file filter visibility

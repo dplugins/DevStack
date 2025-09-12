@@ -17,6 +17,9 @@
       </button>
       <button class="tab-button" data-tab="cache-buster">Cache Buster</button>
       <button class="tab-button" data-tab="debug-helpers">Debug Helpers</button>
+      <button class="tab-button" data-tab="admin-shortcuts">
+        Admin Shortcuts
+      </button>
     </div>
 
     <!-- URL Swapper Tab -->
@@ -250,6 +253,19 @@
               <span class="slider"></span>
             </label>
           </div>
+
+          <div class="form-group">
+            <label for="debugPanelPosition">Panel Position</label>
+            <select id="debugPanelPosition">
+              <option value="top-right">Top Right</option>
+              <option value="top-left">Top Left</option>
+              <option value="bottom-right">Bottom Right</option>
+              <option value="bottom-left">Bottom Left</option>
+            </select>
+            <div class="hint">
+              Choose where the debug panel trigger button appears
+            </div>
+          </div>
         </fieldset>
 
         <!-- Highlight parameters -->
@@ -307,6 +323,92 @@
           • Use quick action buttons to add debug parameters to URLs<br />
           • WordPress sites will show REST API and Admin buttons<br />
           • Debug panel auto-detects and highlights debug parameters
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Shortcuts Tab -->
+    <div id="admin-shortcuts-tab" class="tab-content">
+      <!-- Enabled toggle -->
+      <div class="toggle-wrap">
+        <span>Enabled</span>
+        <label class="toggle">
+          <input id="adminShortcutsEnabled" type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div id="adminShortcutsSettings" class="hidden">
+        <!-- Admin shortcuts configuration -->
+        <fieldset>
+          <legend>Admin Shortcuts</legend>
+
+          <div class="form-group">
+            <label for="adminPanelPosition">Panel Position</label>
+            <select id="adminPanelPosition">
+              <option value="top-left">Top Left</option>
+              <option value="top-right">Top Right</option>
+              <option value="bottom-left">Bottom Left</option>
+              <option value="bottom-right">Bottom Right</option>
+            </select>
+            <div class="hint">
+              Choose where the admin shortcuts trigger button appears
+            </div>
+          </div>
+
+          <!-- Visual Builder -->
+          <div id="adminShortcutsBuilder" class="shortcuts-builder">
+            <div class="builder-header">
+              <h4>Add New Shortcut</h4>
+              <button type="button" id="addShortcutBtn" class="add-btn">
+                + Add Shortcut
+              </button>
+            </div>
+
+            <div id="shortcutsList" class="shortcuts-list">
+              <!-- Shortcuts will be dynamically added here -->
+            </div>
+          </div>
+
+          <!-- Raw textarea (hidden by default) -->
+          <div class="raw-editor-toggle">
+            <button type="button" id="toggleRawEditor" class="toggle-raw-btn">
+              Show Raw Editor
+            </button>
+          </div>
+
+          <textarea
+            id="adminShortcutsList"
+            class="hidden"
+            placeholder="Dashboard|/wp-admin/|🏠&#10;Pages|/wp-admin/edit.php?post_type=page|📄&#10;Posts|/wp-admin/edit.php|📝&#10;Plugins|/wp-admin/plugins.php|🔌&#10;Themes|/wp-admin/themes.php|🎨&#10;Users|/wp-admin/users.php|👥&#10;Settings|/wp-admin/options-general.php|⚙️&#10;Debug Log|/wp-admin/tools.php?page=debug-log|🐛"
+            rows="8"
+          ></textarea>
+
+          <div class="hint">
+            <strong>Visual Builder:</strong> Add shortcuts using the form
+            above<br />
+            <strong>Raw Editor:</strong> Click "Show Raw Editor" for manual
+            editing (format: Name|URL|Icon)<br />
+            <strong>Icons:</strong> Use emoji or leave empty for default icon
+          </div>
+        </fieldset>
+
+        <!-- Keyboard shortcuts -->
+        <fieldset>
+          <legend>Keyboard Shortcuts</legend>
+          <div class="hint">
+            <strong>Ctrl+Shift+A</strong> - Toggle admin shortcuts panel<br />
+            <strong>⚡ Button</strong> - Click the floating button in top-left
+            corner
+          </div>
+        </fieldset>
+
+        <div class="hint tip">
+          <strong>WordPress Only:</strong> Admin shortcuts only appear on
+          WordPress sites.<br />
+          • Look for the ⚡ button in the top-left corner of WordPress pages<br />
+          • Click it or press <strong>Ctrl+Shift+A</strong> to open the admin
+          panel<br />
+          • Quick access to common WordPress admin pages
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@
     enabled,
     autoHighlight = true,
     showRESTButton = true,
+    panelPosition = "top-right",
     customParams = [],
     highlightParams = [
       "elementor-preview",
@@ -312,6 +313,26 @@
 
     document.body.appendChild(panel);
 
+    // Click outside to close functionality
+    const handleClickOutside = (event) => {
+      if (
+        panel &&
+        panel.parentNode &&
+        !panel.contains(event.target) &&
+        !document
+          .getElementById("devstack-debug-trigger")
+          .contains(event.target)
+      ) {
+        panel.remove();
+        document.removeEventListener("click", handleClickOutside);
+      }
+    };
+
+    // Add click outside listener after a small delay to prevent immediate closing
+    setTimeout(() => {
+      document.addEventListener("click", handleClickOutside);
+    }, 100);
+
     // Auto-hide after 10 seconds if no interaction
     let hideTimeout = setTimeout(() => {
       if (panel.parentNode) {
@@ -499,29 +520,45 @@
       existingButton.remove();
     }
 
+    // Get position styles based on panelPosition setting
+    const getPositionStyles = (position) => {
+      const baseStyles = `
+        position: fixed;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #0d6cfc;
+        color: white;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 999998;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+
+      switch (position) {
+        case "top-left":
+          return baseStyles + "top: 20px; left: 20px;";
+        case "top-right":
+          return baseStyles + "top: 20px; right: 20px;";
+        case "bottom-left":
+          return baseStyles + "bottom: 20px; left: 20px;";
+        case "bottom-right":
+          return baseStyles + "bottom: 20px; right: 20px;";
+        default:
+          return baseStyles + "top: 20px; right: 20px;";
+      }
+    };
+
     const triggerButton = document.createElement("button");
     triggerButton.id = "devstack-debug-trigger";
     triggerButton.innerHTML = "🔧";
     triggerButton.title = "DevStack Debug Panel (Ctrl+Shift+D)";
-    triggerButton.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: #0d6cfc;
-      color: white;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      z-index: 999998;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    `;
+    triggerButton.style.cssText = getPositionStyles(panelPosition);
 
     triggerButton.addEventListener("mouseenter", () => {
       triggerButton.style.transform = "scale(1.1)";

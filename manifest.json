@@ -27,6 +27,11 @@
       "matches": ["<all_urls>"],
       "js": ["debug-helpers.js"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["admin-shortcuts.js"],
+      "run_at": "document_end"
     }
   ]
 }
